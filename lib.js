@@ -1,4 +1,4 @@
-class wiki {
+export class wiki {
 	static async search(language, query) {
 		let result = await fetch(`https://${language}.wikipedia.org/w/api.php?action=query&list=search&srsearch=${query}&format=json&origin=*`).then(x => x.json());
 		// console.log(result)
@@ -10,12 +10,13 @@ class wiki {
 	}
 }
 
-async function loadPharmacon(language, query) {
+export async function loadPharmacon(language, query) {
 	let results = await wiki.search(language, query)
-	console.log(query, results);
-	let title = results.filter(x => x.wordcount > 99)[0].title
+	// console.log(query, results);
+	let title = results.filter(x => x.wordcount > 99)[0]?.title
+	if(!title) return {};
 	let content = await wiki.page(language, title )
-	console.log('con', content)
+	// console.log('con', content)
 	let data = WikiPage.de(content)
 	data.INN = title.toLowerCase();
 	return data;
@@ -23,7 +24,7 @@ async function loadPharmacon(language, query) {
 
 /// parse a Wikipedia entry
 function find(string, regex) {
-	console.log('find', regex, string.match(regex))
+	// console.log('find', regex, string.match(regex))
 	// return string.match(regex) ?? [];
 	var matches, result = [];
 	while ((matches = regex.exec(string)) != null)
@@ -46,6 +47,7 @@ class WikiPage {
 		// console.log('frei', findKey(text, 'Freiname'))
 		return {
 			INN: findKey(text, 'Freiname').join('').trim().toLowerCase(),
+			names: [],
 			ATC: find(text, /{{ATC\|(.*?)}}/g).map(x => x.replace(/\|/g, '')),
 			CAS: findKey(text, 'CAS').map(x => x.replace(/[^0-9\-]/g, '').trim()),
 			formula: findKey(text, 'Suchfunktion').map(x => x.trim()),

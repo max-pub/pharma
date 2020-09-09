@@ -1,4 +1,4 @@
-const HASH = {
+const  HASH = {
 	get: () => {
 		let tmp = document.location.hash.substr(1).split(':');
 		return { language: tmp[0] ?? '', queries: tmp[1]?.split(',')?.map(x => decodeURI(x)) ?? [] }
@@ -18,3 +18,5 @@ const HASH = {
 	},
 	setLanguage: language => HASH.set(language, HASH.get().queries)
 }
+
+export default HASH;
