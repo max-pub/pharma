@@ -25,7 +25,7 @@ function hashChange() {
 }
 // console.log('hash',document.location.hash.trim())
 if (document.location.hash.trim().length<2)
-	document.location.hash = 'de:aspirin';
+	document.location.hash = 'de:aspirin,diazepam';
 else
 	hashChange(); // call at startup and on events
 
