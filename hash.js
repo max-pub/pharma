@@ -5,6 +5,7 @@ const  HASH = {
 	},
 	set: (language, queries) => document.location.hash = language + ':' + queries.join(','),
 	addQueries: (queries) => {
+		console.log('add queries',queries)
 		if (typeof queries == 'string') queries = queries.split(',').filter(x => x);
 		let old = HASH.get();
 		HASH.set(old.language, [...new Set([...old.queries, ...queries])].sort())

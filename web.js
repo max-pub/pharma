@@ -23,14 +23,18 @@ function hashChange() {
 
 	search();
 }
-hashChange(); // call at startup and on events
+// console.log('hash',document.location.hash.trim())
+if (document.location.hash.trim().length<2)
+	document.location.hash = 'de:aspirin';
+else
+	hashChange(); // call at startup and on events
 
 
 
 async function search() {
 	let todo = Array.from(document.querySelectorAll('#tags span')).filter(node => !node.classList.contains('done'));
 	console.log('query', todo);
-	if(!todo.length) return;
+	if (!todo.length) return;
 	todo[0].classList.add('loading');
 	// for (let query of HASH.get().queries) {
 	let result = await lib.loadPharmacon(HASH.get().language, todo[0].textContent)
@@ -78,5 +82,6 @@ window.addEventListener('hashchange', e =>
 
 
 document.querySelector('button').addEventListener('click', e => {
+	addInput(document.querySelector('textarea'))
 	search()
 })
