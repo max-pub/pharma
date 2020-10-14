@@ -24,7 +24,7 @@ function hashChange() {
 	search();
 }
 // console.log('hash',document.location.hash.trim())
-if (document.location.hash.trim().length<2)
+if (document.location.hash.trim().length < 2)
 	document.location.hash = 'de:aspirin,dormicum';
 else
 	hashChange(); // call at startup and on events
@@ -33,12 +33,13 @@ else
 
 async function search() {
 	let todo = Array.from(document.querySelectorAll('#tags span')).filter(node => !node.classList.contains('done'));
-	console.log('query', todo);
+	console.log('web.search', todo);
 	if (!todo.length) return;
 	todo[0].classList.add('loading');
 	// for (let query of HASH.get().queries) {
-	let result = await lib.loadPharmacon(HASH.get().language, todo[0].textContent)
-	DATA[result.INN] = result;
+	// let result = await lib.loadPharmacon(HASH.get().language, todo[0].textContent)
+	let result = await lib.loadPharmaconPlus(todo[0].textContent)
+	DATA[result.CAS[0]] = result;
 	document.querySelector('#output').innerHTML = JSON.stringify(DATA);
 	todo[0].classList.remove('loading')
 	todo[0].classList.add('done');
@@ -49,7 +50,7 @@ async function search() {
 // setTimeout(search, 500);
 
 
-
+// lib.loadPharmacon('en', 'aspirin')
 
 
 
