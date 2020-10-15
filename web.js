@@ -16,7 +16,7 @@ function hashChange() {
 			? node.classList.add('active')
 			: node.classList.remove('active')
 	);
-
+	console.log('hash', HASH.get())
 	document.querySelector('#tags').innerHTML =
 		HASH.get().queries.map(x => `<span class='${DATA[x] ? 'done' : ''}'>${x}</span>`).join('\n');
 	// document.querySelector('#tags').innerHTML += string.split(',').map(x => x.trim()).map(x => `<span>${x}</span>`).join('\n')
@@ -25,7 +25,8 @@ function hashChange() {
 }
 // console.log('hash',document.location.hash.trim())
 if (document.location.hash.trim().length < 2)
-	document.location.hash = 'de:aspirin,dormicum';
+	document.location.hash = 'aspirin---dormicum';
+// document.location.hash = 'de:aspirin,dormicum';
 else
 	hashChange(); // call at startup and on events
 
@@ -40,7 +41,7 @@ async function search() {
 	// let result = await lib.loadPharmacon(HASH.get().language, todo[0].textContent)
 	let result = await lib.loadPharmaconPlus(todo[0].textContent)
 	DATA[result.CAS[0]] = result;
-	document.querySelector('#output').innerHTML = JSON.stringify(DATA);
+	document.querySelector('#output').innerHTML = JSON.stringify(DATA, null, '\t');
 	todo[0].classList.remove('loading')
 	todo[0].classList.add('done');
 	// }
@@ -66,13 +67,15 @@ document.querySelector('#tags').addEventListener('click', e => {
 })
 
 
-document.querySelector('textarea').addEventListener('input', e => {
-	if (e.data == ',')
-		addInput(e.target);
+document.querySelector('input').addEventListener('keyup', event => {
+	console.log('input',event)
+	// if (e.data == ',')
+	if (event.key == 'Enter')
+		addInput(event.target);
 })
 
 window.addEventListener('paste', e => {
-	HASH.add((event.clipboardData || window.clipboardData).getData('text'));
+	HASH.addQueries((e.clipboardData || window.clipboardData).getData('text'));
 	e.preventDefault();
 	return false;
 })
@@ -83,6 +86,9 @@ window.addEventListener('hashchange', e =>
 
 
 document.querySelector('button').addEventListener('click', e => {
-	addInput(document.querySelector('textarea'))
-	search()
+	addInput(document.querySelector('input'))
+	// search()
 })
+// remdesivir
+// beloc
+// dormicum

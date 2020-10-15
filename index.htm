@@ -1,7 +1,7 @@
 <meta charset="utf-8" />
 <script type='module' src='https://max.pub/hilite/dist/json-view.tag.js'></script>
 
-<link href="web.css" rel="stylesheet"/>
+<link href="web.css" rel="stylesheet" />
 
 <main>
 	<h1>Pharma Info</h1>
@@ -11,14 +11,17 @@
 		<span>es</span>
 	</div>
 	<div id='input'>
+		<input id='query' placeholder="search for ingredients or trade names"/>
+		<button>search</button>
+		<!-- <textarea placeholder="search for ingredients or trade names 
+one entry per line"></textarea> -->
 
-		<textarea placeholder="search for ingredients or trade names 
-comma or newline separated"></textarea>
 	</div>
-	<button>search</button>
+	<!-- <button>search</button> -->
 	<div id='tags'></div>
-	<json-view id='output'></json-view>
+	<json-view id='output' class='copy save'></json-view>
 </main>
 
 
 <script type='module' src='web.js'></script>
+
