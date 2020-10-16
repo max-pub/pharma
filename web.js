@@ -1,7 +1,6 @@
 import * as lib from './lib.js';
 import HASH from './hash.js';
 
-let DATA = {};
 
 
 function addInput(node) {
@@ -18,7 +17,7 @@ function hashChange() {
 	);
 	console.log('hash', HASH.get())
 	document.querySelector('#tags').innerHTML =
-		HASH.get().queries.map(x => `<span class='${DATA[x] ? 'done' : ''}'>${x}</span>`).join('\n');
+		HASH.get().queries.map(x => `<span class='${lib.QUERIES[x] ? 'done' : ''}'>${x}</span>`).join('\n');
 	// document.querySelector('#tags').innerHTML += string.split(',').map(x => x.trim()).map(x => `<span>${x}</span>`).join('\n')
 
 	search();
@@ -33,19 +32,22 @@ else
 
 
 async function search() {
-	let todo = Array.from(document.querySelectorAll('#tags span')).filter(node => !node.classList.contains('done'));
-	console.log('web.search', todo);
-	if (!todo.length) return;
-	todo[0].classList.add('loading');
+	let todos = Array.from(document.querySelectorAll('#tags span')).filter(node => !node.classList.contains('done')).slice(0,5);//.map(x=>x.textContent);
+	// console.log('web.search', todo);
+	if (!todos.length) return;
+	todos.map(x=>x.classList.add('loading'));
 	// for (let query of HASH.get().queries) {
 	// let result = await lib.loadPharmacon(HASH.get().language, todo[0].textContent)
-	let result = await lib.loadPharmaconPlus(todo[0].textContent)
-	DATA[result.CAS[0]] = result;
-	document.querySelector('#output').innerHTML = JSON.stringify(DATA, null, '\t');
-	todo[0].classList.remove('loading')
-	todo[0].classList.add('done');
+	// await lib.loadPharmacon(todo[0].textContent)
+	await Promise.all(todos.map(x => lib.loadPharmacon(x.textContent)))
+
+	document.querySelector('#output').innerHTML = JSON.stringify(lib.DATA, null, '\t');
+	todos.map(x=>x.classList.remove('loading'));
+	todos.map(x=>x.classList.add('done'));
+	// todo[0].classList.remove('loading')
+	// todo[0].classList.add('done');
 	// }
-	search()
+	search() // continue search, 1 by 1
 }
 
 // setTimeout(search, 500);
@@ -68,7 +70,7 @@ document.querySelector('#tags').addEventListener('click', e => {
 
 
 document.querySelector('input').addEventListener('keyup', event => {
-	console.log('input',event)
+	// console.log('input',event)
 	// if (e.data == ',')
 	if (event.key == 'Enter')
 		addInput(event.target);

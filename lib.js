@@ -2,10 +2,13 @@
 import wiki from 'https://max.pub/lib/wiki.js';
 import parseWikiPage from './wiki.js';
 
-let DATA = {};
-let QUERIES = {};
+export let DATA = {};
+export let QUERIES = {};
 
 let languages = ['de', 'en'];
+
+
+
 
 function merge(...data) {
 	let output = {};
@@ -18,27 +21,41 @@ function merge(...data) {
 	}
 	return output;
 }
-export async function loadPharmaconPlus(query) {
-	let results = await Promise.all(languages.map(x => loadPharmacon(x, query)))
+// export async function loadPharmaconInBatches(...queries) {
+// 	return await Promise.all(queries);
+// }
+export async function loadPharmacon(query) {
+	if (QUERIES[query.toLowerCase()]) return DATA[QUERIES[query.toLowerCase()]]
+	let results = await Promise.all(languages.map(x => loadPharmaconForLanguage(x, query)))
 	let output = merge(...results);
 	// output.query = [...output.query ?? [], query];
 	console.log('OUTPUT', output)
 	DATA[output.CAS[0]] = merge(DATA[output.CAS[0]], output)
+	QUERIES[query] = output.CAS[0];
 	return output;
 }
-export async function loadPharmacon(language, query) {
+export async function loadPharmaconForLanguage(language, query) {
 	let results = await wiki.search(language, query)
 	// console.log('query', query, results);
-	let titles = results.filter(x => x.wordcount > 99).map(x => x.title).slice(0, 3);
+	let titles = results.filter(x => x.wordcount > 99).map(x => x.title).slice(0, 5);
 	console.log('lib.search', language.toUpperCase(), query, titles)
-	let pages = await Promise.all(titles.map(x => wiki.page(language, x)));
+	// let pages = await Promise.all(titles.map(x => wiki.page(language, x)));
 	// console.log('lib.pages', language, pages);
-	for (let i in pages) {
+	// for (let i in pages) {
+	let i = 0;
+	for (let title of titles) {
+		if(QUERIES[title.toLowerCase()]) return DATA[QUERIES[title.toLowerCase()]]
 		// let data = WikiPage[language](pages[i]);
-		let data = parseWikiPage(pages[i]);
-		data.names = [titles[i].toLowerCase(), query.toLowerCase()]
+		console.log(language.toUpperCase(), ++i, title);
+		let page = await wiki.page(language, title)
+		let data = parseWikiPage(page);
+		data.title = [title];
+		data.names = [title.toLowerCase(), query.toLowerCase()]
 		// console.log("PAGE", language, titles[i], data)
-		if (data.ATC?.length) return data;
+		if (data.CAS?.length) {
+			QUERIES[title.toLowerCase()] = data.CAS[0];
+			return data;
+		}
 		// console.log('lib.data', data);
 	}
 	// let titles = results.filter(x => x.wordcount > 99).map(x => x.title);

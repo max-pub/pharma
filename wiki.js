@@ -17,7 +17,7 @@ const WikiPage = {
 		CAS: text.findKeyMultiLine('CAS').map(x => x.replace(/\*/g,'').trim().split(' ')[0]),
 		formula: text.findKey('Suchfunktion').map(x => x.trim()),
 		// group: text.findKeyMultiLine('Wirkstoffgruppe').join(' ').split(']]').map(x => x.replace(/[\[\]\*]/g, '').trim()).map(x => x.split('|').slice(-1)[0]),
-		group: text.findKeyMultiLine('Wirkstoffgruppe')?.map(x => x.replace(/[\[\]\*]/g, '').trim()),
+		group: text.findKeyMultiLine('Wirkstoffgruppe')?.join('\n').split(']]').map(x => x.replace(/[\[\]\*]/g, '').trim()),
 	})
 	,
 	'Infobox drug': text => ({
