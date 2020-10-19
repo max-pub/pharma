@@ -30,7 +30,9 @@ function merge(...data) {
 
 function cleanArrays(o) {
 	for (let a in o) {
-		o[a] = [...new Set(o[a].map(x => x?.trim()).filter(x => x))]
+		try {
+			o[a] = [...new Set(o[a].map(x => x?.trim()).filter(x => x))]
+		} catch { o[a] = []; }
 	}
 }
 
@@ -44,7 +46,7 @@ export async function loadPharmacon(query) {
 	// output.query = [...output.query ?? [], query];
 	// console.log('OUTPUT', output)
 	let sameCAS = results.map(x => x?.CAS?.[0]).filter(x => x);
-	console.log('sameCAS', sameCAS)
+	console.log('sameCAS', sameCAS, query)
 	if (sameCAS.length < languages.length || new Set(sameCAS).size > 1) {
 		QUERIES[query] = '';
 		return {}
