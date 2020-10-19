@@ -20,7 +20,7 @@ function hashChange() {
 		HASH.get().queries.map(x => `<span class='${lib.QUERIES[x] ? 'done' : ''}'>${x}</span>`).join('\n');
 	// document.querySelector('#tags').innerHTML += string.split(',').map(x => x.trim()).map(x => `<span>${x}</span>`).join('\n')
 
-	search();
+	loadBatch();
 }
 // console.log('hash',document.location.hash.trim())
 if (document.location.hash.trim().length < 2)
@@ -31,8 +31,8 @@ else
 
 
 
-async function search() {
-	let todos = Array.from(document.querySelectorAll('#tags span')).filter(node => !node.classList.contains('done')).slice(0,5);//.map(x=>x.textContent);
+async function loadBatch(size=5) {
+	let todos = Array.from(document.querySelectorAll('#tags span')).filter(node => !node.classList.contains('done')).slice(0,size);//.map(x=>x.textContent);
 	// console.log('web.search', todo);
 	if (!todos.length) return;
 	todos.map(x=>x.classList.add('loading'));
@@ -47,7 +47,7 @@ async function search() {
 	// todo[0].classList.remove('loading')
 	// todo[0].classList.add('done');
 	// }
-	search() // continue search, 1 by 1
+	loadBatch() // continue search, 1 by 1
 }
 
 // setTimeout(search, 500);
