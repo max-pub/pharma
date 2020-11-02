@@ -46,7 +46,7 @@ export async function loadPharmacon(query) {
 	// output.query = [...output.query ?? [], query];
 	// console.log('OUTPUT', output)
 	let sameCAS = results.map(x => x?.CAS?.[0]).filter(x => x);
-	console.log('sameCAS', sameCAS, query)
+	console.log('\t', query.padEnd(30), 'CAS', sameCAS)
 	if (sameCAS.length < languages.length || new Set(sameCAS).size > 1) {
 		QUERIES[query] = '';
 		return {}
@@ -73,7 +73,7 @@ export async function loadPharmaconForLanguage(language, query) {
 	let results = await wiki.search(language, query)
 	// console.log('query', query, results);
 	let titles = results.filter(x => x.wordcount > 99).map(x => x.title).slice(0, 3);
-	console.log('\t', query.padEnd(30), language.toUpperCase(), titles)
+	console.log('\t', query.padEnd(30), language.toUpperCase(), 'search', titles.join('    '))
 	// let pages = await Promise.all(titles.map(x => wiki.page(language, x)));
 	// console.log('lib.pages', language, pages);
 	// for (let i in pages) {

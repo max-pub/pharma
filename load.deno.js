@@ -6,7 +6,7 @@ let queryList = [...new Set(Deno.readTextFileSync('./list.full.txt').split('\n')
 if (Deno.args.length) queryList = [...Deno.args];
 // console.log(queryList)
 
-async function loadBatch(size = 10) {
+async function loadBatch(size = 1) {
 	console.log(queryList.length, 'left');
 	// let batch = []
 	// if (queryList.length < size) size = queryList.length;

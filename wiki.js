@@ -22,7 +22,7 @@ const WikiPage = {
 	,
 	'Infobox Chemikalie': text => ({
 		// names: [],
-		CAS: text.findKeyMultiLine('CAS').map(x => x.replace(/\*/g,'').trim().split(' ')[0]),
+		CAS: text.findKeyMultiLine('CAS').map(x => x.replace(/[^0-9\-]/g, ' ').trim().split(' ')[0].trim()),
 		ATC: text.find(/{{ATC\|(.*?)}}/g).map(x => x.replace(/\|/g, '')),
 		INN: text.findKey('Freiname').map(x => x.toLowerCase()),//.join('').trim().toLowerCase(),
 		// CAS: text.findKey('CAS').map(x => x.replace(/[^0-9\-]/g, '').trim()),
@@ -46,7 +46,7 @@ const WikiPage = {
 	,
 	'Drugbox': text => ({
 		// names: [],
-		CAS: text.findKey('CAS_number').map(x => x.replace(/[^0-9\-]/g, '').trim()),
+		CAS: [...text.findKey('CAS_number').map(x => x.replace(/[^0-9\-]/g, '').trim()), ...text.findKey('CAS_supplemental').map(x => x.replace(/[^0-9\-]/g, '').trim())],
 		ATC: [text.findKey('ATC_prefix')?.[0] + text.findKey('ATC_suffix')?.[0], ...text.find(/{{ATC\|(.*?)}}/g).map(x => x.replace(/\|/g, ''))],
 		UNII: text.findKey('UNII'),
 		DrugBank: text.findKey('DrugBank'),
@@ -82,7 +82,7 @@ String.prototype.findKey = function (key) {
 }
 
 String.prototype.findKeyMultiLine = function (key) {
-	return this.find(new RegExp(`${key}\\s+?=\\s+([\\s\\S]*?(?=\\|))`, 'gm'))?.join()?.split('\n');
+	return this.find(new RegExp(`${key}\\s+?=\\s+([\\s\\S]*?(?=^\\|))`, 'gm'))?.join()?.split('\n');
 }
 
 
