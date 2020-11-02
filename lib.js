@@ -1,6 +1,10 @@
 
 import wiki from 'https://max.pub/lib/wiki.js';
+import 'https://max.pub/lib/array.js';
+// import 'https://max.pub/lib/string.js';
+
 import parseWikiPage from './wiki.js';
+
 
 export let DATA = {};
 export let QUERIES = {};
@@ -9,17 +13,22 @@ let languages = ['de', 'en'];
 
 
 export async function getPagesFromCategory(language, categoryName) {
-
 	let names = []
 	let gcmcontinue;
-	let result;
+	// let result;
 	do {
-		result = await fetch(`https://${language}.wikipedia.org/w/api.php?action=query&format=json&origin=*&prop=info&generator=categorymembers&gcmtitle=Kategorie:${categoryName}&gcmlimit=max${gcmcontinue?`&gcmcontinue=${gcmcontinue}`:""}`).then(x => x.json());
-		let loaded = names.concat(Object.keys(result.query.pages).map(pageId=>result.query.pages[pageId].title))
-		console.log(`loaded ${loaded.length} results`)
-		names = loaded
-		gcmcontinue = result.continue?result.continue.gcmcontinue:null
-	}while( result.continue && result.continue.gcmcontinue)
+		let result = await fetch(`https://${language}.wikipedia.org/w/api.php?action=query&format=json&origin=*&prop=info&generator=categorymembers&gcmtitle=Kategorie:${categoryName}&gcmlimit=max${gcmcontinue ? `&gcmcontinue=${gcmcontinue}` : ""}`).then(x => x.json());
+		// console.log(result);
+		// Deno.writeTextFileSync('raw.json', JSON.stringify(result, 0, 4))
+		// let loaded = names.concat(Object.keys(result.query.pages).map(pageId => result.query.pages[pageId].title))
+		names = [...names, ...Object.values(result.query.pages).map(x => x.title)]
+		console.log(`loaded ${names.length} results`)
+		// names = loaded
+		// break;
+		gcmcontinue = result?.continue?.gcmcontinue;
+		// gcmcontinue = result.continue ? result.continue.gcmcontinue : null
+	} while (gcmcontinue)
+	// } while (result.continue && result.continue.gcmcontinue)
 	return names;
 }
 
@@ -65,7 +74,7 @@ export async function loadPharmacon(query) {
 		return {}
 	}
 	for (let i in languages) {
-		let CAS = results[i].CAS[0];
+		let CAS = results[i]?.CAS?.[0];
 		if (!DATA[CAS]) DATA[CAS] = {};
 		cleanArrays(results[i])
 		DATA[CAS][languages[i]] = results[i];
