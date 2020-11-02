@@ -8,7 +8,20 @@ export let QUERIES = {};
 let languages = ['de', 'en'];
 
 
+export async function getPagesFromCategory(language, categoryName) {
 
+	let names = []
+	let gcmcontinue;
+	let result;
+	do {
+		result = await fetch(`https://${language}.wikipedia.org/w/api.php?action=query&format=json&origin=*&prop=info&generator=categorymembers&gcmtitle=Kategorie:${categoryName}&gcmlimit=max${gcmcontinue?`&gcmcontinue=${gcmcontinue}`:""}`).then(x => x.json());
+		let loaded = names.concat(Object.keys(result.query.pages).map(pageId=>result.query.pages[pageId].title))
+		console.log(`loaded ${loaded.length} results`)
+		names = loaded
+		gcmcontinue = result.continue?result.continue.gcmcontinue:null
+	}while( result.continue && result.continue.gcmcontinue)
+	return names;
+}
 
 function merge(...data) {
 	let output = {};
