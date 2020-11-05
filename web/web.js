@@ -1,4 +1,5 @@
-import * as lib from './lib.js';
+import pharma from '../lib/pharma.js';
+import CACHE from '../lib/cache.js';
 import HASH from './hash.js';
 
 
@@ -10,6 +11,7 @@ function addInput(node) {
 
 
 function hashChange() {
+	console.log('hash change')
 	document.querySelectorAll('#lang span').forEach(node =>
 		node.textContent.trim() == HASH.get().language
 			? node.classList.add('active')
@@ -17,7 +19,7 @@ function hashChange() {
 	);
 	console.log('hash', HASH.get())
 	document.querySelector('#tags').innerHTML =
-		HASH.get().queries.map(x => `<span class='${lib.QUERIES[x] ? 'done' : ''}'>${x}</span>`).join('\n');
+		HASH.get().queries.map(x => `<span class='${CACHE.find({ query: [x] }) ? 'done' : ''}'>${x}</span>`).join('\n');
 	// document.querySelector('#tags').innerHTML += string.split(',').map(x => x.trim()).map(x => `<span>${x}</span>`).join('\n')
 
 	loadBatch();
@@ -31,19 +33,20 @@ else
 
 
 
-async function loadBatch(size=5) {
-	let todos = Array.from(document.querySelectorAll('#tags span')).filter(node => !node.classList.contains('done')).slice(0,size);//.map(x=>x.textContent);
+async function loadBatch(size = 5) {
+	let todos = Array.from(document.querySelectorAll('#tags span')).filter(node => !node.classList.contains('done')).slice(0, size);//.map(x=>x.textContent);
 	// console.log('web.search', todo);
 	if (!todos.length) return;
-	todos.map(x=>x.classList.add('loading'));
+	todos.map(x => x.classList.add('loading'));
+	console.log('todos', todos)
 	// for (let query of HASH.get().queries) {
 	// let result = await lib.loadPharmacon(HASH.get().language, todo[0].textContent)
 	// await lib.loadPharmacon(todo[0].textContent)
-	await Promise.all(todos.map(x => lib.loadPharmacon(x.textContent)))
+	await Promise.all(todos.map(x => pharma.multiLanguageQuery(x.textContent)))
 
-	document.querySelector('#output').innerHTML = JSON.stringify(lib.DATA, null, '\t');
-	todos.map(x=>x.classList.remove('loading'));
-	todos.map(x=>x.classList.add('done'));
+	document.querySelector('#output').innerHTML = JSON.stringify(CACHE.data, null, '\t');
+	todos.map(x => x.classList.remove('loading'));
+	todos.map(x => x.classList.add('done'));
 	// todo[0].classList.remove('loading')
 	// todo[0].classList.add('done');
 	// }

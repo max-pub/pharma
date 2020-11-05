@@ -1,8 +1,9 @@
-import * as lib from './lib.js';
+import pharma from '../lib/pharma.js';
+import CACHE from '../lib/cache.js';
 let t0 = new Date().getTime();
 
 // load unique & non-null query-list
-let queryList = [...new Set(Deno.readTextFileSync('data/list.txt').split('\n').filter(x => x))];
+let queryList = [...new Set(Deno.readTextFileSync('../data/queries.txt').split('\n').filter(x => x))];
 if (Deno.args.length) queryList = [...Deno.args];
 // console.log(queryList)
 
@@ -20,16 +21,16 @@ async function loadBatch(size = 1) {
 	// .filter(x => x)
 
 	console.log('batch', batch)
-	let result = await Promise.all(batch.map(x => lib.loadPharmacon(x.replace(/[^a-z]/gi, ' ')?.trim()?.split(' ')[0])));
+	let result = await Promise.all(batch.map(x => pharma.query(x)))//.replace(/[^a-z]/gi, ' ')?.trim()?.split(' ')[0])));
 	// console.log(result)
 	for (let i in batch) {
-		console.log(batch[i], result[i])
+		// console.log(batch[i], result[i])
 		result[i]?.names?.push(batch[i])
 	}
 	console.log('save batch')
-	Deno.writeTextFileSync('data/output.meta.json', JSON.stringify(lib.QUERIES, null, '\t'));
-	Deno.writeTextFileSync('data/output.queries.json', Object.entries(lib.QUERIES).filter(x => x[1].trim()).map(x => x[0]).join('\n'));
-	Deno.writeTextFileSync('data/output.json', JSON.stringify(Object.values(lib.DATA), null, '\t'));
+	// Deno.writeTextFileSync('data/output.meta.json', JSON.stringify(lib.QUERIES, null, '\t'));
+	Deno.writeTextFileSync('../data/output.queries.json', JSON.stringify(CACHE.data, null, '\t'));
+	// Deno.writeTextFileSync('data/output.json', JSON.stringify(Object.values(lib.DATA), null, '\t'));
 	if (queryList.length) loadBatch();
 }
 
