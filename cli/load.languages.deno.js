@@ -12,3 +12,7 @@ do{
 }while(llcontinue)
 
 console.log(langlinks)
+
+
+let short = Object.fromEntries(langlinks.map(x => [x.lang, x['*']]));
+console.log(short)
