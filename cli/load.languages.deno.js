@@ -1,15 +1,14 @@
 let args = [...Deno.args];
 
-let titles = args[0]
-let lang = args[1]
+let titles = args[0];
+let lang = args[1];
+let llcontinue;
+let langlinks = []
 
+do{
+    let res = await fetch(`https://${lang}.wikipedia.org/w/api.php?action=query&format=json&prop=langlinks&titles=${titles}&llprop=autonym%7Clangname%7Curl&lllimit=max${llcontinue?`&llcontinue=${llcontinue}`:''}`).then(data=> data.json())
+    langlinks = langlinks.concat( Object.values(res?.query?.pages)[0]?.langlinks ?? [] )
+    llcontinue = res?.continue?.llcontinue
+}while(llcontinue)
 
-let result = await fetch(`https://${lang}.wikipedia.org/w/api.php?action=query&format=json&prop=langlinks&titles=${titles}&llprop=autonym%7Clangname%7Curl`).then(data=> data.json())
-let langlinks = result
-                &&result.query
-                &&result.query.pages
-                &&result.query.pages[Object.keys(result.query.pages)[0]]
-                &&result.query.pages[Object.keys(result.query.pages)[0]].langlinks
-                ?result.query.pages[Object.keys(result.query.pages)[0]].langlinks
-                :[]
 console.log(langlinks)
