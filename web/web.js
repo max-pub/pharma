@@ -26,7 +26,7 @@ function hashChange() {
 }
 // console.log('hash',document.location.hash.trim())
 if (document.location.hash.trim().length < 2)
-	document.location.hash = 'aspirin---dormicum';
+	document.location.hash = 'aspirin---dormicum---novalgin';
 // document.location.hash = 'de:aspirin,dormicum';
 else
 	hashChange(); // call at startup and on events
