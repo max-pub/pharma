@@ -12,7 +12,7 @@ let result = await fetch(`https://${lang}.wikipedia.org/w/api.php?action=query&f
 // 	? result.query.pages[Object.keys(result.query.pages)[0]].langlinks
 // 	: []
 
-let langlinks = Object.values(result?.query?.pages)[0]?.langlinks ?? []
+let langlinks = Object.values(result?.query?.pages ?? [])[0]?.langlinks ?? []
 console.log(langlinks)
 
 
