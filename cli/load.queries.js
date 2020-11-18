@@ -3,8 +3,9 @@ import CACHE from '../lib/cache.js';
 let t0 = new Date().getTime();
 
 // load unique & non-null query-list
-let queryList = [...new Set(Deno.readTextFileSync('../data/queries.txt').split('\n').filter(x => x))];
+let queryList = [];
 if (Deno.args.length) queryList = [...Deno.args];
+else queryList = [...new Set(Deno.readTextFileSync('../data/queries.txt').split('\n').filter(x => x))];
 // console.log(queryList)
 
 async function loadBatch(size = 1) {

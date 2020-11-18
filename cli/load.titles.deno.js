@@ -1,13 +1,17 @@
 import pharma from '../lib/pharma.js';
 import CACHE from '../lib/cache.js';
 let t0 = new Date().getTime();
+const DATA_DIR = '../data/';
 
 // load unique & non-null query-list
-let list = [...new Set(Deno.readTextFileSync('../data/list.de.txt').split('\n').filter(x => x))];
+var list = [];
 if (Deno.args.length) list = [...Deno.args];
+else[...new Set(Deno.readTextFileSync(DATA_DIR + '/list.de.txt').split('\n').filter(x => x))];
 // console.log(queryList)
 
-try { CACHE.init(JSON.parse(Deno.readTextFileSync('../data/output.json'))) } catch (e) { console.log(e, 'no existing cache') }
+var cache = [];
+try { cache = JSON.parse(Deno.readTextFileSync('../data/output.json')) } catch (e) { console.log('no existing cache') }
+CACHE.init(cache);
 
 console.log(CACHE.size, 'pharmacons already in cache')
 
@@ -25,8 +29,8 @@ async function loadBatch(size = 10) {
 	// .filter(x => x)
 
 	// console.log('batch', batch)
-	let results = await Promise.all(batch.map(title => pharma.load(title,'de')));
-	// console.log(results)
+	let results = await Promise.all(batch.map(title => pharma.multiLanguageTitle(title)));
+	console.log(JSON.stringify(results, 0, 4))
 	// for (let result of results) {
 	// 	console.log('loop', results)
 	// 	// result[i]?.names?.push(batch[i])
@@ -35,6 +39,7 @@ async function loadBatch(size = 10) {
 	// Deno.writeTextFileSync('data/output.meta.json', JSON.stringify(lib.QUERIES, null, '\t'));
 	// Deno.writeTextFileSync('data/output.queries.json', Object.entries(lib.QUERIES).filter(x => x[1].trim()).map(x => x[0]).join('\n'));
 	Deno.writeTextFileSync('../data/output.json', JSON.stringify(CACHE.data, null, '\t'));
+
 	if (list.length) loadBatch();
 }
 

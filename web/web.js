@@ -43,7 +43,7 @@ async function loadBatch(size = 5) {
 	// let result = await lib.loadPharmacon(HASH.get().language, todo[0].textContent)
 	// await lib.loadPharmacon(todo[0].textContent)
 	await Promise.all(todos.map(x => pharma.multiLanguageQuery(x.textContent)))
-
+	console.log("CACHE",CACHE.data)
 	document.querySelector('#output').innerHTML = JSON.stringify(CACHE.data, null, '\t');
 	todos.map(x => x.classList.remove('loading'));
 	todos.map(x => x.classList.add('done'));
