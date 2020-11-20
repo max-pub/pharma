@@ -10,7 +10,7 @@ async function loadAndSave(language, title) {
 	Deno.writeTextFileSync(DATA_DIR + `/list.${language}.txt`, list.sort().join('\n'))
 }
 
-await loadAndSave('de', 'Arzneistoff')
+// await loadAndSave('de', 'Arzneistoff')
 // await loadAndSave('en', 'Drugs')
 // await loadAndSave('en', 'World_Health_Organization_essential_medicines')
-// await loadAndSave('en', 'Redirects_from_trade_names_of_drugs')
+await loadAndSave('en', 'Redirects_from_trade_names_of_drugs')
